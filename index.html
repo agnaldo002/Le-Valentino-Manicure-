@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Valentino Manicure - Agendamento</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+:root{
+  --primary:#ffb6c1;
+  --primary-dark:#e099a3;
+  --secondary:#e6e6fa;
+  --accent:#dda0dd;
+  --accent-dark:#c080c0;
+  --text:#4a4a4a;
+}
+body{min-height:100vh;background:linear-gradient(135deg,#ffe4e1 0%,#e6e6fa 50%,#f0e6f0 100%);background-attachment:fixed;color:var(--text);padding-bottom:80px}
+.app{max-width:1100px;margin:0 auto;padding:20px}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 25px;background:rgba(255,255,255,.6);backdrop-filter:blur(10px);border-radius:20px;margin-bottom:25px;box-shadow:0 4px 15px rgba(0,0,0,.05)}
+.logo{font-size:1.6rem;font-weight:bold;display:flex;align-items:center;gap:8px;color:#d4a5d4}
+.logo span{font-size:2rem}
+.user{display:flex;align-items:center;gap:10px;font-size:.9rem;color:#666}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#fff,#ffe4e1);display:flex;align-items:center;justify-content:center;color:#d4a5d4;font-weight:bold;border:2px solid #ffb6c1}
+
+nav{display:flex;justify-content:center;gap:12px;margin-bottom:25px;flex-wrap:wrap}
+
+.btn, nav button, .icon-btn, .picker-btn, .dp-footer button, .tp-footer button {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.3s ease;
+  box-shadow: 0 6px 0 var(--btn-shadow, var(--primary-dark)), 
+              0 10px 15px rgba(0,0,0,0.1),
+              inset 0 1px 0 rgba(255,255,255,0.4);
+  transform: translateY(0);
+  z-index: 1;
+}
+
+nav button {
+  --btn-shadow: #d4a5d4;  background: linear-gradient(135deg, #ffffff, #f8f0f8);
+  color: #666;
+}
+nav button.active {  --btn-shadow: #c080a0;
+  background: linear-gradient(135deg, #ffb6c1, #dda0dd);
+  color: #fff;
+}
+.btn {
+  --btn-shadow: #c080a0;
+  background: linear-gradient(135deg, #ffb6c1, #dda0dd);
+  color: #fff;
+}
+.btn-pdf {
+  --btn-shadow: #b88a8a;
+  background: linear-gradient(135deg, #e6a8a8, #d4a5a5);
+}
+.btn-wpp {
+  --btn-shadow: #6ab07c;
+  background: linear-gradient(135deg, #98d4a8, #7ec494);
+}
+.icon-btn {
+  --btn-shadow: #d0d0d0;
+  background: #fff;
+  box-shadow: 0 4px 0 #d0d0d0, 0 6px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+.picker-btn {
+  --btn-shadow: #e0e0e0;
+  background: rgba(255,255,255,0.9);
+  color: var(--text);
+  box-shadow: 0 4px 0 #e0e0e0, 0 6px 10px rgba(0,0,0,0.05);
+}
+
+.btn:active, nav button:active, .icon-btn:active, .picker-btn:active, .dp-footer button:active, .tp-footer button:active {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 var(--btn-shadow, var(--primary-dark)), 
+              0 2px 5px rgba(0,0,0,0.1),
+              inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn::before, nav button::before, .icon-btn::before, .picker-btn::before {  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: conic-gradient(    from 0deg, transparent 0deg, rgba(255,255,255,0.9) 15deg, transparent 30deg,
+    rgba(255,255,255,0.9) 45deg, transparent 60deg, rgba(255,255,255,0.9) 75deg, transparent 90deg,
+    rgba(255,255,255,0.9) 105deg, transparent 120deg, rgba(255,255,255,0.9) 135deg, transparent 150deg,
+    rgba(255,255,255,0.9) 165deg, transparent 180deg, rgba(255,255,255,0.9) 195deg, transparent 210deg,
+    rgba(255,255,255,0.9) 225deg, transparent 240deg, rgba(255,255,255,0.9) 255deg, transparent 270deg,
+    rgba(255,255,255,0.9) 285deg, transparent 300deg, rgba(255,255,255,0.9) 315deg, transparent 330deg,
+    rgba(255,255,255,0.9) 345deg, transparent 360deg
+  );
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.btn.fan-click::before, nav button.fan-click::before, .icon-btn.fan-click::before, .picker-btn.fan-click::before {
+  animation: fanExpand 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes fanExpand {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0.8; }
+  40% { opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(40) rotate(180deg); opacity: 0; }
+}
+
+nav button:hover, .btn:hover, .icon-btn:hover, .picker-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 var(--btn-shadow, var(--primary-dark)), 
+              0 12px 20px rgba(0,0,0,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.card{background:rgba(255,255,255,.7);backdrop-filter:blur(10px);border-radius:20px;padding:25px;margin-bottom:20px;border:1px solid rgba(255,255,255,.5);box-shadow:0 4px 15px rgba(0,0,0,.05)}
+.card h2{margin-bottom:18px;display:flex;align-items:center;gap:10px;color:#8b7b8b}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,230,230,.6));padding:16px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.6);text-align:center;transition:.3s}
+.stat:hover{transform:translateY(-3px);box-shadow:0 6px 15px rgba(0,0,0,.08)}
+.stat .num{font-size:1.8rem;font-weight:bold;margin:6px 0;color:#d4a5d4}
+.stat .lbl{opacity:.9;font-size:.8rem;line-height:1.3;color:#666}
+.stat:first-child{padding:22px 14px}
+.stat:first-child .num{font-size:2.3rem}
+.stat:first-child .lbl{font-size:.9rem}
+
+.form-stack{display:flex;flex-direction:column;gap:14px}
+.form-group{margin:0}
+.form-group label{display:block;margin-bottom:6px;font-weight:600;font-size:.9rem;color:#666}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;transition:.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#ffb6c1;background:#fff}
+.form-group select option{color:var(--text)}
+.picker-btn{width:100%;padding:14px 18px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;gap:12px;transition:.2s;text-align:left}
+.picker-btn .icon{font-size:1.3rem}
+.picker-btn .value{flex:1;font-weight:600}
+.picker-btn .arrow{opacity:.6}
+.picker-btn.has-value{background:#fff;border-color:#ffb6c1}
+
+.dp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.dp-overlay.show{display:flex}
+.dp-modal{background:#fff;border-radius:12px;max-width:340px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.dp-header{background:linear-gradient(135deg,#ffb6c1,#dda0dd);padding:20px 24px;color:#fff}
+.dp-header .year{font-size:.9rem;opacity:.9;margin-bottom:4px}
+.dp-header .date-display{font-size:1.8rem;font-weight:300}
+.dp-body{padding:16px;background:#fff}.dp-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dp-nav button{background:none;border:none;color:#666;font-size:1.3rem;cursor:pointer;padding:8px;border-radius:50%;transition:.2s; box-shadow: none !important; transform: none !important;}.dp-nav button:hover{background:rgba(255,182,193,.2);color:#d4a5d4}
+.dp-nav .month-label{font-size:1rem;font-weight:600;color:#666}
+.dp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:8px}
+.dp-weekdays span{text-align:center;font-size:.75rem;color:#999;padding:4px 0}
+.dp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dp-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;font-size:.9rem;transition:.15s;color:#666}
+.dp-day:hover{background:rgba(255,182,193,.2)}
+.dp-day.empty{cursor:default}
+.dp-day.empty:hover{background:transparent}
+.dp-day.today{border:1px solid #ffb6c1}
+.dp-day.selected{background:#ffb6c1;color:#fff;font-weight:bold}
+.dp-day.has-appt{position:relative}
+.dp-day.has-appt::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;background:#d4a5d4;border-radius:50%}
+.dp-footer{display:flex;justify-content:space-between;padding:12px 16px;background:#fff;border-top:1px solid rgba(0,0,0,.05)}
+.dp-footer button{background:none;border:none;color:#ffb6c1;font-size:.95rem;font-weight:600;cursor:pointer;padding:8px 16px;border-radius:6px;transition:.2s;text-transform:uppercase; box-shadow: none !important;}
+.dp-footer button:hover{background:rgba(255,182,193,.1)}
+.dp-footer .btn-clear{color:#999}
+
+.tp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.tp-overlay.show{display:flex}
+.tp-modal{background:#fff;border-radius:12px;max-width:340px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.tp-display{background:linear-gradient(135deg,#ffb6c1,#dda0dd);padding:25px 24px;text-align:center;color:#fff}
+.tp-digital{font-size:3.5rem;font-weight:200;letter-spacing:2px}
+.tp-digital .colon{animation:blink 1s infinite;margin:0 4px}
+@keyframes blink{50%{opacity:.3}}
+.tp-digital .period{font-size:1rem;opacity:.9;margin-left:8px;vertical-align:super}
+.tp-body{padding:20px;background:#fff}
+.time-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:5px}
+.time-slot{padding:12px;text-align:center;border-radius:10px;cursor:pointer;background:rgba(255,230,230,.5);font-weight:600;transition:.2s;border:1px solid rgba(255,182,193,.3);color:#666}
+.time-slot:hover:not(.busy){background:rgba(255,182,193,.3);transform:translateY(-2px)}
+.time-slot.busy{background:rgba(200,200,200,.3);cursor:not-allowed;text-decoration:line-through;opacity:.5}
+.time-slot.selected{background:#ffb6c1;color:#fff;border-color:#ffb6c1}
+.time-slot.duration-blocked{background:rgba(255,182,193,.15);cursor:not-allowed;opacity:.4}
+.tp-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid rgba(0,0,0,.05)}
+.tp-footer button{background:none;border:none;color:#ffb6c1;font-size:.95rem;font-weight:600;cursor:pointer;padding:8px 16px;border-radius:6px;transition:.2s;text-transform:uppercase; box-shadow: none !important;}
+.tp-footer button:hover{background:rgba(255,182,193,.1)}
+.tp-footer .btn-cancel{color:#999}
+.btn{padding:14px 26px;border:none;border-radius:30px;cursor:pointer;background:linear-gradient(135deg,#ffb6c1,#dda0dd);color:#fff;font-weight:bold;font-size:.95rem;transition:.3s;box-shadow:0 4px 12px rgba(255,182,193,.3)}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;justify-content:flex-end}
+.icon-btn{background:none!important;border:none!important;cursor:pointer;font-size:1.3rem;padding:6px;transition:.2s;display:inline-flex;align-items:center;justify-content:center;opacity:.9}
+.icon-btn:hover{transform:scale(1.15) translateY(-2px);opacity:1}
+.icon-confirm{color:#7ec494}
+.icon-pending{color:#f0c674}
+.icon-whatsapp{color:#7ec494}
+.icon-edit{color:#a8c4e6}
+.icon-delete{color:#e6a8a8}
+
+.appt-list{display:flex;flex-direction:column;gap:12px}
+.appt{background:rgba(255,255,255,.6);padding:16px;border-radius:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,.6)}.appt.confirmed{border-left:4px solid #7ec494}
+.appt-info h4{margin-bottom:4px;color:#666}
+.appt-info p{font-size:.9rem;opacity:.9;color:#888}
+.appt-time{background:#ffb6c1;color:#fff;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:.9rem}
+.badge-confirm{background:#7ec494;color:#fff;padding:4px 10px;border-radius:12px;font-size:.75rem;font-weight:bold;margin-left:6px}
+.badge-pending{background:#f0c674;color:#fff;padding:4px 10px;border-radius:12px;font-size:.75rem;font-weight:bold;margin-left:6px}
+.empty-msg{text-align:center;padding:40px;opacity:.8;color:#888}
+
+.week-chart{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:20px}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.bar-container{width:100%;height:180px;display:flex;flex-direction:column;justify-content:flex-start;position:relative;background:rgba(255,182,193,.1);border-radius:10px;padding:5px}
+.bar{width:100%;background:linear-gradient(180deg,#ffb6c1,#ffe4e1);border-radius:8px;min-height:8px;transition:.5s;position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:6px}
+.bar-val{font-weight:bold;font-size:.9rem;color:#d4a5d4}
+.bar-lbl{font-size:.8rem;opacity:.9;text-align:center;line-height:1.3;color:#666}
+.bar-lbl small{font-size:.7rem;opacity:.8;display:block}
+
+.search-bar{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:200px}
+.screen{display:none}
+.screen.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.modal.show{display:flex}
+.modal-content{background:#fff;max-width:450px;width:100%;border-radius:20px;padding:30px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-content h3{margin-bottom:20px;color:#8b7b8b}
+.close{float:right;background:none;border:none;color:#999;font-size:1.5rem;cursor:pointer}
+.close:hover{color:#666}
+
+.config-box{background:rgba(255,230,230,.5);padding:15px;border-radius:12px;margin-bottom:15px}
+.config-box p{font-size:.85rem;opacity:.9;margin-bottom:8px;color:#666}
+.service-duration{font-size:.8rem;color:#999;margin-top:4px}
+.duration-legend{background:rgba(255,182,193,.1);padding:10px;border-radius:8px;margin-top:10px;font-size:.8rem;color:#666}
+
+.package{background:rgba(255,255,255,.6);padding:16px;border-radius:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,.6);border-left:4px solid #dda0dd}
+.package-info h4{margin-bottom:4px;color:#666}
+.package-info p{font-size:.9rem;opacity:.9;color:#888;margin:2px 0}
+.package-price{background:#dda0dd;color:#fff;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:1rem}
+.set-section{margin:22px 0 6px;font-weight:700;color:#c050a0;font-size:.95rem}
+.set-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 6px;border-bottom:1px solid rgba(0,0,0,.06);border-radius:8px}
+.set-row.click{cursor:pointer}
+.set-row.click:hover{background:rgba(255,182,193,.1)}
+.set-txt{flex:1}
+.set-title{font-weight:600;color:#555;font-size:1rem}
+.set-sub{font-size:.85rem;color:#999;margin-top:3px}
+.switch{position:relative;display:inline-block;width:52px;height:28px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:28px;transition:.3s}
+.slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.switch input:checked + .slider{background:#c050a0}
+.switch input:checked + .slider:before{transform:translateX(24px)}
+.set-help{width:26px;height:26px;border-radius:50%;border:2px solid #999;color:#999;display:inline-flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;flex:none;background:none}
+.set-help:hover{border-color:#c050a0;color:#c050a0}
+.set-alert{width:28px;height:28px;border-radius:50%;background:#c050a0;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(150%);background:#c050a0;color:#fff;padding:14px 22px;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.25);transition:transform .4s, opacity .4s, visibility .4s;z-index:300;max-width:90%;text-align:center;font-weight:600;opacity:0;visibility:hidden;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
+
+@media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+  .app{padding:12px}header{padding:14px}.logo{font-size:1.3rem}
+  nav button{padding:10px 16px;font-size:.85rem}
+  .stat .num{font-size:1.3rem}.stat:first-child .num{font-size:1.8rem}.stat .lbl{font-size:.75rem}
+  .btn{padding:12px 20px;font-size:.85rem}.bar-container{height:140px}
+  .dp-header .date-display{font-size:1.5rem}.tp-digital{font-size:2.8rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo"><span>💅</span> Le Valentino Manicure</div>
+    <div class="user"><div class="avatar">L</div><div>Valentino</div></div>
+  </header>
+  <nav>
+    <button class="nav-btn active" id="nav-home" onclick="go('home')"> Início</button>
+    <button class="nav-btn" id="nav-novo" onclick="go('novo')">➕ Agendar</button>
+    <button class="nav-btn" id="nav-agendados" onclick="go('agendados')">📋 Agendados</button>
+    <button class="nav-btn" id="nav-pacotes" onclick="go('pacotes')">🎁 Pacotes</button>
+    <button class="nav-btn" id="nav-fluxo" onclick="go('fluxo')">📊 Fluxo</button>
+    <button class="nav-btn" id="nav-config" onclick="go('config')">⚙️ Config</button>
+  </nav>
+
+  <div class="screen active" id="home">
+    <div class="card">
+      <h2>✨ Bem-vinda à Le Valentino Manicure</h2>
+      <p style="margin-bottom:15px;color:#666">Horário de atendimento: 6:00 às 22:00</p>
+      <div class="stats">        <div class="stat"><div class="lbl">📅 Hoje</div><div class="num" id="st-hoje">0</div><div class="lbl">agendamentos</div></div>
+        <div class="stat"><div class="lbl">📆 Semana</div><div class="num" id="st-semana">0</div><div class="lbl">clientes</div></div>
+        <div class="stat"><div class="lbl">📋 Total</div><div class="num" id="st-total">0</div><div class="lbl">agendados</div></div>
+        <div class="stat"><div class="lbl">⏰ Próximo</div><div class="num" id="st-prox" style="font-size:1rem">--</div><div class="lbl"> </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="novo">
+    <div class="card">
+      <h2>💅 Novo Agendamento</h2>
+      <div class="form-stack">
+        <div class="form-group">
+          <label>👤 Nome do Cliente *</label>
+          <input type="text" id="f-name" placeholder="Ex: Maria Silva">
+        </div>
+        <div class="form-group">
+          <label>💅 Serviço *</label>
+          <select id="f-service" onchange="updateServiceDuration()">
+            <option value="manicure">Manicure (1h)</option>
+            <option value="pedicure">Pedicure (1h)</option>
+            <option value="manicure-pedicure">Manicure + Pedicure (2h)</option>
+            <option value="gel-esmalte">Esmaltação em Gel (2h)</option>
+            <option value="unha-gel">Unha em Gel (3h)</option>
+          </select>
+          <div class="service-duration" id="service-duration">Duração: 1 hora</div>
+        </div>
+        <div class="form-group">
+          <label> Data *</label>
+          <button type="button" class="picker-btn" id="btn-date" onclick="openDatePicker()">
+            <span class="icon">📅</span>
+            <span class="value" id="date-display">Toque para escolher a data</span>
+            <span class="arrow">›</span>
+          </button>
+        </div>
+        <div class="form-group">          <label>⏰ Horário *</label>
+          <button type="button" class="picker-btn" id="btn-time" onclick="openTimePicker()">
+            <span class="icon">🕐</span>
+            <span class="value" id="time-display">Toque para escolher o horário</span>
+            <span class="arrow">›</span>
+          </button>
+        </div>
+        <div class="form-group">
+          <label> Telefone</label>
+          <input type="tel" id="f-phone" placeholder="(00) 00000-0000">
+        </div>
+        <div class="form-group">
+          <label>📝 Observação</label>
+          <textarea id="f-obs" rows="2" placeholder="Opcional"></textarea>
+        </div>      </div>
+      <div class="btn-row">
+        <button class="btn btn-wpp" onclick="saveAndWhatsApp()">💾 Salvar e Enviar WhatsApp</button>
+        <button class="btn" onclick="saveAppt()">💾 Apenas Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="agendados">
+    <div class="card">
+      <h2>📋 Agendamentos</h2>
+      <div class="search-bar">
+        <input type="text" id="filter-name" placeholder="🔍 Buscar por nome..." oninput="renderAgendados()">
+        <input type="date" id="filter-date" onchange="renderAgendados()">
+      </div>
+      <div class="appt-list" id="appt-list"></div>
+      <div class="btn-row">
+        <button class="btn btn-pdf" onclick="exportPDF()">📄 Exportar PDF</button>
+        <button class="btn btn-wpp" onclick="exportWhatsApp()">💬 Enviar WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="pacotes">
+    <div class="card">
+      <h2>🎁 Pacotes Promocionais</h2>
+      <div class="form-stack">
+        <div class="form-group">
+          <label>📦 Nome do Pacote *</label>
+          <input type="text" id="p-name" placeholder="Ex: Pacote Verão">
+        </div>
+        <div class="form-group">
+          <label>💅 Serviço *</label>
+          <select id="p-service">
+            <option value="manicure">Manicure</option>
+            <option value="pedicure">Pedicure</option>
+            <option value="manicure-pedicure">Manicure + Pedicure</option>
+            <option value="gel-esmalte">Esmaltação em Gel</option>
+            <option value="unha-gel">Unha em Gel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>💰 Valor (R$) *</label>
+          <input type="number" id="p-price" placeholder="Ex: 99.90" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>📅 Início da Promoção *</label>
+          <input type="date" id="p-start">
+        </div>
+        <div class="form-group">          <label>📅 Fim da Promoção *</label>
+          <input type="date" id="p-end">
+        </div>
+        <div class="form-group">
+          <label>📝 Descrição</label>
+          <textarea id="p-desc" rows="2" placeholder="Opcional"></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="savePackage()">💾 Salvar Pacote</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📋 Pacotes Cadastrados</h2>
+      <div id="package-list"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="fluxo">
+    <div class="card">
+      <h2>📊 Fluxo Semanal</h2>
+      <p style="opacity:.9;margin-bottom:10px" id="week-range"></p>
+      <div class="week-chart" id="week-chart"></div>
+      <div style="margin-top:25px;padding:18px;background:rgba(255,230,230,.5);border-radius:15px">
+        <h3 style="margin-bottom:10px;color:#666">📈 Resumo</h3>
+        <p>Total da semana: <strong id="week-total" style="color:#d4a5d4">0</strong> clientes</p>
+        <p>Média diária: <strong id="week-avg" style="color:#d4a5d4">0</strong> clientes</p>
+        <p>Dia mais movimentado: <strong id="week-top" style="color:#d4a5d4">--</strong></p>
+      </div>
+      <div class="btn-row">        <button class="btn btn-pdf" onclick="exportFluxoPDF()">📄 PDF do Fluxo</button>
+        <button class="btn btn-wpp" onclick="exportFluxoWhatsApp()">💬 WhatsApp Fluxo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="config">
+    <div class="card">
+      <h2>⚙️ Configurações</h2>
+
+      <div class="set-section">Notificações</div>
+      <div class="set-row">
+        <div class="set-txt"><div class="set-title">Notificações</div></div>
+        <label class="switch"><input type="checkbox" id="set-notif" onchange="toggleNotif()"><span class="slider"></span></label>
+      </div>
+      <div class="set-row">
+        <div class="set-txt"><div class="set-title">Modo silencioso</div><div class="set-sub" id="silent-sub">Modo silencioso desativado</div></div>
+        <label class="switch"><input type="checkbox" id="set-silent" onchange="toggleSilent()"><span class="slider"></span></label>
+      </div>
+
+      <div class="set-section">Padrões</div>      <div class="set-row click" onclick="openServicesModal()">
+        <div class="set-txt"><div class="set-title">Serviços</div><div class="set-sub">Adicionar, editar e excluir serviços com duração</div></div>
+        <span class="set-alert">›</span>
+      </div>
+
+      <div class="set-section">Agendamento</div>
+      <div class="set-row click" onclick="openReminderModal()">
+        <div class="set-txt"><div class="set-title">Mudar a mensagem de lembrete</div><div class="set-sub" id="reminder-sub">Mensagem padrão</div></div>
+      </div>
+      <div class="set-row click" onclick="setNotifTime()">
+        <div class="set-txt"><div class="set-title">Tempo de notificação antes do agendamento</div><div class="set-sub" id="notiftime-sub">Não definido</div></div>
+      </div>
+      <div class="set-row click" onclick="setIntervalCfg()">
+        <div class="set-txt"><div class="set-title">Intervalo para aviso sobre horários ocupados</div><div class="set-sub" id="interval-sub">30 minutos</div></div>
+      </div>
+
+      <div class="set-section">Backup de dados</div>
+      <div class="set-row click" onclick="createBackup()">
+        <div class="set-txt"><div class="set-title">Criar cópia de segurança</div></div>
+        <span class="set-help" onclick="event.stopPropagation();helpBackup(1)">?</span>
+      </div>
+      <div class="set-row click" onclick="restoreBackup()">
+        <div class="set-txt"><div class="set-title">Restaurar cópia de segurança</div></div>
+        <span class="set-help" onclick="event.stopPropagation();helpBackup(2)">?</span>
+      </div>
+      <div class="set-row click" onclick="driveBackup()">
+        <div class="set-txt"><div class="set-title">Cópias on-line com o Google Drive™</div></div>
+        <span class="set-help" onclick="event.stopPropagation();helpBackup(3)">?</span>
+      </div>
+      <input type="file" id="restore-file" accept=".json,application/json" style="display:none" onchange="onRestoreFile(event)">
+
+      <div class="set-section">Aplicativo</div>
+      <div class="set-row click" onclick="wipeAll()">
+        <div class="set-txt"><div class="set-title">Apagar todos os dados do aplicativo</div><div class="set-sub">Apaga: telefone/endereço do salão, agendamentos, pacotes e históricos de fluxo</div></div>
+      </div>
+
+      <div class="set-section">Salão</div>
+      <div class="config-box">
+        <p><strong>📱 WhatsApp do Salão</strong></p>
+        <p>Configure o número para receber confirmações. Formato: 55 + DDD + número</p>
+        <input type="text" id="cfg-phone" placeholder="5511999998888" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;margin-top:8px">
+      </div>
+      <div class="config-box">
+        <p><strong>📍 Endereço do Salão</strong></p>
+        <p>Endereço completo que aparecerá nas mensagens</p>
+        <input type="text" id="cfg-address" placeholder="Rua Exemplo, 123 - Bairro - Cidade/UF" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;margin-top:8px">
+      </div>
+      <button class="btn" style="margin-top:12px" onclick="saveConfig()">💾 Salvar Configurações</button>
+
+      <div class="config-box" style="margin-top:20px">        <p><strong>ℹ️ Como funciona?</strong></p>
+        <p style="margin-top:8px">1. Ao agendar, clique em "Salvar e Enviar WhatsApp"</p>
+        <p>2. O cliente recebe mensagem com link de confirmação</p>
+        <p>3. O cliente clica no link e envia SIM ou NÃO</p>
+        <p>4. Na lista, clique em ⏳ para marcar como confirmado</p>
+        <p>5. Em "Padrões" > "Serviços", adicione novos serviços ou edite a duração dos existentes</p>
+        <p>6. Em "Agendamento", personalize a mensagem de lembrete e o tempo de notificação</p>
+        <p>7. Na aba 🎁 Pacotes, crie promoções e compartilhe com um toque</p>
+        <p>8. Use "Criar cópia de segurança" e guarde o arquivo no seu Google Drive</p>
+        <p style="margin-top:10px;color:#d4a5d4"><strong>⏰ Agendamentos são automaticamente excluídos após 6 meses</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATE PICKER MODAL -->
+<div class="dp-overlay" id="dp-overlay">
+  <div class="dp-modal">
+    <div class="dp-header">
+      <div class="year" id="dp-year">2026</div>
+      <div class="date-display" id="dp-date-display">Selecione uma data</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-nav">
+        <button onclick="dpChangeMonth(-1)">‹</button>
+        <span class="month-label" id="dp-month-label">julho de 2026</span>
+        <button onclick="dpChangeMonth(1)">›</button>
+      </div>
+      <div class="dp-weekdays"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+      <div class="dp-days" id="dp-days"></div>
+    </div>
+    <div class="dp-footer">
+      <button class="btn-clear" onclick="dpClear()">Limpar</button>      <button onclick="dpCancel()">Cancelar</button>
+      <button onclick="dpConfirm()">Definir</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIME PICKER MODAL -->
+<div class="tp-overlay" id="tp-overlay">
+  <div class="tp-modal">
+    <div class="tp-display">
+      <div class="tp-digital">
+        <span id="tp-hour-display">06</span><span class="colon">:</span><span id="tp-minute-display">00</span>
+        <span class="period" id="tp-period">manhã</span>
+      </div>
+    </div>
+    <div class="tp-body">
+      <div class="time-slots" id="time-slots"></div>
+      <div class="duration-legend" id="duration-legend"></div>    </div>
+    <div class="tp-footer">
+      <button class="btn-cancel" onclick="tpCancel()">Cancelar</button>
+      <button onclick="tpConfirm()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal" id="modal-edit">
+  <div class="modal-content">
+    <button class="close" onclick="closeEditModal()">×</button>
+    <h3>✏️ Editar Agendamento</h3>
+    <div class="form-group" style="margin-bottom:15px"><label>Nome</label><input type="text" id="e-name"></div>
+    <div class="form-group" style="margin-bottom:15px"><label>Telefone</label><input type="tel" id="e-phone"></div>
+    <div class="form-group" style="margin-bottom:15px">
+      <label>Serviço</label>
+      <select id="e-service">
+        <option value="manicure">Manicure (1h)</option>
+        <option value="pedicure">Pedicure (1h)</option>
+        <option value="manicure-pedicure">Manicure + Pedicure (2h)</option>
+        <option value="gel-esmalte">Esmaltação em Gel (2h)</option>
+        <option value="unha-gel">Unha em Gel (3h)</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:15px"><label>Observação</label><textarea id="e-obs" rows="2"></textarea></div>
+    <input type="hidden" id="e-id">
+    <button class="btn" onclick="updateAppt()" style="margin-top:15px;width:100%">💾 Salvar Alterações</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PACOTE -->
+<div class="modal" id="modal-edit-package">
+  <div class="modal-content">
+    <button class="close" onclick="closeEditPackageModal()">×</button>
+    <h3>✏️ Editar Pacote</h3>
+    <div class="form-group" style="margin-bottom:15px"><label>Nome</label><input type="text" id="ep-name"></div>
+    <div class="form-group" style="margin-bottom:15px">
+      <label>Serviço</label>
+      <select id="ep-service">
+        <option value="manicure">Manicure</option>
+        <option value="pedicure">Pedicure</option>
+        <option value="manicure-pedicure">Manicure + Pedicure</option>
+        <option value="gel-esmalte">Esmaltação em Gel</option>
+        <option value="unha-gel">Unha em Gel</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:15px"><label>Valor (R$)</label><input type="number" id="ep-price" step="0.01"></div>
+    <div class="form-group" style="margin-bottom:15px"><label>Início</label><input type="date" id="ep-start"></div>
+    <div class="form-group" style="margin-bottom:15px"><label>Fim</label><input type="date" id="ep-end"></div>    <div class="form-group" style="margin-bottom:15px"><label>Descrição</label><textarea id="ep-desc" rows="2"></textarea></div>
+    <input type="hidden" id="ep-id">
+    <button class="btn" onclick="updatePackage()" style="margin-top:15px;width:100%">💾 Salvar Alterações</button>
+  </div>
+</div>
+
+<!-- MODAL SERVIÇOS -->
+<div class="modal" id="modal-services">
+  <div class="modal-content">
+    <button class="close" onclick="closeServicesModal()">×</button>
+    <h3>💅 Serviços e Durações</h3>
+    <div id="services-list"></div>
+    <div class="config-box" style="margin-top:15px">
+      <p><strong>➕ Adicionar / ✏️ Editar Serviço</strong></p>
+      <input type="text" id="s-name" placeholder="Nome do serviço (ex: Spa dos Pés)" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;margin-bottom:8px">
+      <input type="number" id="s-duration" min="15" step="15" placeholder="Duração em minutos (ex: 60)" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.8);color:var(--text);font-size:1rem;margin-bottom:8px">
+      <input type="hidden" id="s-id">
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-pdf" onclick="clearServiceForm()">Limpar</button>
+        <button class="btn" onclick="saveService()">💾 Salvar Serviço</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MENSAGEM DE LEMBRETE -->
+<div class="modal" id="modal-reminder">
+  <div class="modal-content">
+    <button class="close" onclick="closeReminderModal()">×</button>
+    <h3>📝 Mensagem de Lembrete</h3>
+    <p style="font-size:.85rem;color:#888;margin-bottom:10px">Esta mensagem será enviada junto com o WhatsApp de confirmação do cliente. Deixe vazio para usar a mensagem padrão.</p>
+    <textarea id="r-msg" rows="4" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(200,200,200,.4);background:rgba(255,255,255,.9);color:var(--text);font-size:1rem"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-pdf" onclick="resetReminder()">Restaurar Padrão</button>
+      <button class="btn" onclick="saveReminder()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// === ARMAZENAMENTO PROTEGIDO (não trava mesmo com dados corrompidos) ===
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+function loadArr(k) {
+  try {
+    var v = JSON.parse(lsGet(k));
+    return Array.isArray(v) ? v : [];  } catch (e) { return []; }
+}
+
+// Variáveis globais
+var selectedDate = null;
+var selectedHour = 6;
+var selectedMinute = 0;
+var appts = loadArr('glam_appts');
+var packages = loadArr('glam_packages');
+var salonPhone = lsGet('glam_phone') || '';
+var salonAddress = lsGet('glam_address') || '';
+var dpMonth = new Date().getMonth();
+var dpYear = new Date().getFullYear();
+var dpSelectedDate = null;
+
+var cfgNotif = lsGet('glam_notif') !== '0';
+var cfgSilent = lsGet('glam_silent') === '1';
+var reminderMsg = lsGet('glam_reminder') || '';
+var notifTime = parseInt(lsGet('glam_notif_time'), 10) || 0;
+var slotInterval = parseInt(lsGet('glam_interval'), 10) || 30;
+if ([15, 30, 60].indexOf(slotInterval) === -1) slotInterval = 30;
+
+// Serviços dinâmicos (sempre válidos)
+var defaultServices = [
+  { id: 'manicure', name: 'Manicure', duration: 60 },
+  { id: 'pedicure', name: 'Pedicure', duration: 60 },
+  { id: 'manicure-pedicure', name: 'Manicure + Pedicure', duration: 120 },
+  { id: 'gel-esmalte', name: 'Esmaltação em Gel', duration: 120 },
+  { id: 'unha-gel', name: 'Unha em Gel', duration: 180 }
+];
+
+function sanitizeServices(list) {
+  if (!Array.isArray(list)) return null;
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var s = list[i];
+    if (s && s.id && s.name) {
+      var d = parseInt(s.duration, 10);
+      if (isNaN(d) || d < 15) d = 60;
+      out.push({ id: String(s.id), name: String(s.name), duration: d });
+    }
+  }
+  return out.length ? out : null;
+}
+
+var services = sanitizeServices(loadArr('glam_services')) || sanitizeServices(JSON.parse(JSON.stringify(defaultServices)));
+var serviceDurations = {};
+var serviceNames = {};
+
+function rebuildServiceMaps() {  serviceDurations = {};
+  serviceNames = {};
+  services.forEach(function(s) {
+    serviceDurations[s.id] = s.duration;
+    serviceNames[s.id] = s.name;
+  });
+}
+
+function fmtDur(min) {
+  var m = parseInt(min, 10) || 0;
+  var h = Math.floor(m / 60), r = m % 60;
+  if (h && r) return h + 'h' + String(r).padStart(2, '0');
+  if (h) return h + 'h';
+  return r + 'min';
+}
+
+function fillServiceSelects() {
+  var ids = ['f-service', 'e-service', 'p-service', 'ep-service'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var prev = el.value;
+    el.innerHTML = '';
+    services.forEach(function(s) {
+      var o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = s.name + ' (' + fmtDur(s.duration) + ')';
+      el.appendChild(o);
+    });
+    if (prev && serviceNames[prev]) el.value = prev;
+  });
+}
+
+rebuildServiceMaps();
+
+var weekdays = ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sáb.'];
+var months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+var monthsShort = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
+
+function cleanOldAppointments() {
+  var sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  var cutoffTime = sixMonthsAgo.getTime();
+  var beforeCount = appts.length;
+  appts = appts.filter(function(a) {
+    if (!a || !a.date) return false;
+    var apptDate = new Date(a.date + 'T00:00:00');
+    return apptDate.getTime() >= cutoffTime;
+  });
+  if (appts.length !== beforeCount) lsSet('glam_appts', JSON.stringify(appts));}
+
+cleanOldAppointments();
+
+function go(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  var sc = document.getElementById(id);
+  if (sc) sc.classList.add('active');
+  var navBtns = document.querySelectorAll('.nav-btn');
+  for (var j = 0; j < navBtns.length; j++) navBtns[j].classList.remove('active');
+  var nb = document.getElementById('nav-' + id);
+  if (nb) nb.classList.add('active');
+  try {
+    if (id === 'home') renderHome();
+    if (id === 'agendados') renderAgendados();
+    if (id === 'pacotes') renderPackages();
+    if (id === 'fluxo') renderFluxo();
+    if (id === 'config') renderConfig();
+  } catch (e) {}
+}
+
+function updateServiceDuration() {
+  var service = document.getElementById('f-service').value;
+  var duration = serviceDurations[service] || 60;
+  var hours = Math.floor(duration / 60);
+  var mins = duration % 60;
+  var durationText = hours + ' hora' + (hours > 1 ? 's' : '');
+  if (mins > 0) durationText += ' e ' + mins + ' minuto' + (mins > 1 ? 's' : '');
+  document.getElementById('service-duration').textContent = 'Duração: ' + durationText;
+}
+
+function openDatePicker() {
+  if (selectedDate) {
+    dpMonth = parseInt(selectedDate.split('-')[1], 10) - 1;
+    dpYear = parseInt(selectedDate.split('-')[0], 10);
+  } else {
+    dpMonth = new Date().getMonth();
+    dpYear = new Date().getFullYear();
+  }
+  dpSelectedDate = selectedDate;
+  renderDatePicker();
+  document.getElementById('dp-overlay').classList.add('show');
+}
+
+function closeDatePicker() { document.getElementById('dp-overlay').classList.remove('show'); }
+
+function renderDatePicker() {
+  document.getElementById('dp-year').textContent = dpYear;
+  document.getElementById('dp-month-label').textContent = months[dpMonth] + ' de ' + dpYear;  if (dpSelectedDate) {
+    var parts = dpSelectedDate.split('-');
+    var dateObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    document.getElementById('dp-date-display').textContent = weekdays[dateObj.getDay()] + ' ' + parseInt(parts[2], 10) + ' de ' + monthsShort[parseInt(parts[1], 10) - 1];
+  } else {
+    document.getElementById('dp-date-display').textContent = 'Selecione uma data';
+  }
+  var grid = document.getElementById('dp-days');
+  grid.innerHTML = '';
+  var first = new Date(dpYear, dpMonth, 1).getDay();
+  var days = new Date(dpYear, dpMonth + 1, 0).getDate();
+  var today = new Date();
+  for (var i = 0; i < first; i++) {
+    var e = document.createElement('div');
+    e.className = 'dp-day empty';
+    grid.appendChild(e);
+  }
+  for (var d = 1; d <= days; d++) {
+    var el = document.createElement('div');
+    el.className = 'dp-day';
+    el.textContent = d;
+    var dateStr = dpYear + '-' + String(dpMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    if (today.getDate() === d && today.getMonth() === dpMonth && today.getFullYear() === dpYear) el.classList.add('today');
+    if (appts.some(function(a) { return a.date === dateStr; })) el.classList.add('has-appt');
+    if (dpSelectedDate === dateStr) el.classList.add('selected');
+    (function(ds) {
+      el.onclick = function() { dpSelectedDate = ds; renderDatePicker(); };
+    })(dateStr);
+    grid.appendChild(el);
+  }
+}
+
+function dpChangeMonth(n) {
+  dpMonth += n;
+  if (dpMonth > 11) { dpMonth = 0; dpYear++; }
+  if (dpMonth < 0) { dpMonth = 11; dpYear--; }
+  renderDatePicker();
+}
+function dpClear() { dpSelectedDate = null; renderDatePicker(); }
+function dpCancel() { closeDatePicker(); }
+
+function dpConfirm() {
+  if (!dpSelectedDate) { alert('Selecione uma data!'); return; }
+  selectedDate = dpSelectedDate;
+  var parts = selectedDate.split('-');
+  var dateObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  document.getElementById('date-display').textContent = weekdays[dateObj.getDay()] + ' ' + parseInt(parts[2], 10) + ' de ' + monthsShort[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+  document.getElementById('btn-date').classList.add('has-value');
+  closeDatePicker();
+}
+function openTimePicker() { renderTimePicker(); document.getElementById('tp-overlay').classList.add('show'); }
+function closeTimePicker() { document.getElementById('tp-overlay').classList.remove('show'); }
+
+function isTimeBlockedByDuration(date, hour, minute, excludeId) {
+  var service = document.getElementById('f-service').value;
+  var duration = serviceDurations[service] || 60;
+  for (var i = 0; i < appts.length; i++) {
+    var a = appts[i];
+    if (!a) continue;
+    if (excludeId && a.id === excludeId) continue;
+    if (a.date !== date) continue;
+    var existingStart = (a.hour || 0) * 60 + (a.minute || 0);
+    var existingEnd = existingStart + (serviceDurations[a.service] || a.duration || 60);
+    var newStart = hour * 60 + minute;
+    var newEnd = newStart + duration;
+    if (newStart < existingEnd && newEnd > existingStart) return true;
+  }
+  return false;
+}
+
+function renderTimePicker() {
+  document.getElementById('tp-hour-display').textContent = String(selectedHour).padStart(2, '0');
+  document.getElementById('tp-minute-display').textContent = String(selectedMinute).padStart(2, '0');
+  var period = selectedHour < 12 ? 'manhã' : selectedHour < 18 ? 'tarde' : 'noite';
+  document.getElementById('tp-period').textContent = period;
+  var container = document.getElementById('time-slots');
+  container.innerHTML = '';
+  var service = document.getElementById('f-service').value;
+  var duration = serviceDurations[service] || 60;
+  var legend = document.getElementById('duration-legend');
+  legend.textContent = '⏱️ Duração do serviço: ' + fmtDur(duration) + ' | Horários riscados estão ocupados';
+  var step = [15, 30, 60].indexOf(slotInterval) >= 0 ? slotInterval : 30;
+  for (var h = 6; h <= 22; h++) {
+    for (var m = 0; m < 60; m += step) {
+      if (h === 22 && m > 0) continue;
+      var slot = document.createElement('div');
+      slot.className = 'time-slot';
+      slot.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      var isOccupied = selectedDate && appts.some(function(a) { return a.date === selectedDate && a.hour === h && a.minute === m; });
+      var isBlocked = selectedDate && isTimeBlockedByDuration(selectedDate, h, m, null);
+      if (isOccupied) {
+        slot.classList.add('busy');
+      } else if (isBlocked) {
+        slot.classList.add('duration-blocked');
+      } else {
+        if (h === selectedHour && m === selectedMinute) slot.classList.add('selected');
+        (function(hour, minute) {
+          slot.onclick = function() { selectedHour = hour; selectedMinute = minute; renderTimePicker(); };
+        })(h, m);      }
+      container.appendChild(slot);
+    }
+  }
+}
+
+function tpCancel() { closeTimePicker(); }
+
+function tpConfirm() {
+  if (selectedDate) {
+    var isOccupied = appts.some(function(a) { return a.date === selectedDate && a.hour === selectedHour && a.minute === selectedMinute; });
+    if (isOccupied) { alert('⚠️ Este horário já está ocupado!'); return; }
+    if (isTimeBlockedByDuration(selectedDate, selectedHour, selectedMinute, null)) { alert('⚠️ Este horário conflita com a duração de outro agendamento!'); return; }
+  }
+  document.getElementById('time-display').textContent = String(selectedHour).padStart(2, '0') + ':' + String(selectedMinute).padStart(2, '0');
+  document.getElementById('btn-time').classList.add('has-value');
+  closeTimePicker();
+}
+
+function saveAppt(sendWpp) {
+  var name = document.getElementById('f-name').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  var service = document.getElementById('f-service').value;
+  var obs = document.getElementById('f-obs').value.trim();
+  if (!name) { alert('⚠️ Informe o nome do cliente!'); return; }
+  if (name.length < 3) { alert('⚠️ Nome muito curto!'); return; }
+  if (!selectedDate) { alert('⚠️ Selecione uma data!'); return; }
+  if (isTimeBlockedByDuration(selectedDate, selectedHour, selectedMinute, null)) { alert('⚠️ Este horário conflita com a duração de outro agendamento!'); return; }
+  var newAppt = {
+    id: Date.now(),
+    date: selectedDate,
+    hour: selectedHour,
+    minute: selectedMinute,
+    name: name,
+    phone: phone,
+    service: service,
+    serviceName: serviceNames[service] || 'Serviço',
+    duration: serviceDurations[service] || 60,
+    obs: obs,
+    confirmed: false,
+    createdAt: new Date().toISOString()
+  };
+  appts.push(newAppt);
+  appts.sort(function(a, b) {
+    if (a.date === b.date) {
+      if (a.hour === b.hour) return (a.minute || 0) - (b.minute || 0);
+      return a.hour - b.hour;
+    }
+    return a.date < b.date ? -1 : 1;
+  });  lsSet('glam_appts', JSON.stringify(appts));
+  alert('✅ Agendamento salvo com sucesso!');
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-phone').value = '';
+  document.getElementById('f-obs').value = '';
+  selectedDate = null;
+  selectedHour = 6;
+  selectedMinute = 0;
+  document.getElementById('date-display').textContent = 'Toque para escolher a data';
+  document.getElementById('time-display').textContent = 'Toque para escolher o horário';
+  document.getElementById('btn-date').classList.remove('has-value');
+  document.getElementById('btn-time').classList.remove('has-value');
+  if (sendWpp) sendSingleWhatsApp(newAppt.id);
+  go('home');
+}
+function saveAndWhatsApp() { saveAppt(true); }
+
+function getFiltered() {
+  var filter = document.getElementById('filter-date').value;
+  var nameFilter = document.getElementById('filter-name').value.toLowerCase().trim();
+  var data = appts.slice();
+  if (filter) data = data.filter(function(a) { return a.date === filter; });
+  if (nameFilter) data = data.filter(function(a) { return String(a.name || '').toLowerCase().indexOf(nameFilter) >= 0; });
+  data.sort(function(a, b) {
+    if (a.date === b.date) {
+      if (a.hour === b.hour) return (a.minute || 0) - (b.minute || 0);
+      return a.hour - b.hour;
+    }
+    return a.date < b.date ? -1 : 1;
+  });
+  return data;
+}
+
+function renderAgendados() {
+  var list = document.getElementById('appt-list');
+  var data = getFiltered();
+  if (!data.length) { list.innerHTML = '<div class="empty-msg">📭 Nenhum agendamento encontrado</div>'; return; }
+  var html = '';
+  data.forEach(function(a) {
+    var parts = a.date.split('-');
+    var durationText = fmtDur(a.duration || 60);
+    var badge = a.confirmed ? '<span class="badge-confirm">✓ Confirmado</span>' : '<span class="badge-pending">⏳ Pendente</span>';
+    var confirmIcon = a.confirmed ?
+      '<span class="icon-btn icon-confirm" onclick="toggleConfirm(' + a.id + ')" title="Desmarcar">✅</span>' :
+      '<span class="icon-btn icon-pending" onclick="toggleConfirm(' + a.id + ')" title="Confirmar">⏳</span>';
+    html += '<div class="appt' + (a.confirmed ? ' confirmed' : '') + '">';
+    html += '<div class="appt-info">';
+    html += '<h4>💅 ' + a.name + ' ' + badge + '</h4>';
+    html += '<p>📞 ' + (a.phone || '--') + ' | ' + a.serviceName + ' (' + durationText + ')</p>';
+    html += '<p>📅 ' + parts[2] + '/' + parts[1] + '/' + parts[0] + (a.obs ? ' | ' + a.obs : '') + '</p>';    html += '</div>';
+    html += '<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">';
+    html += '<div class="appt-time">' + String(a.hour).padStart(2, '0') + ':' + String(a.minute || 0).padStart(2, '0') + '</div>';
+    html += confirmIcon;
+    html += '<span class="icon-btn icon-whatsapp" onclick="sendSingleWhatsApp(' + a.id + ')" title="WhatsApp">💬</span>';
+    html += '<span class="icon-btn icon-edit" onclick="openEditModal(' + a.id + ')" title="Editar">✏️</span>';
+    html += '<span class="icon-btn icon-delete" onclick="delAppt(' + a.id + ')" title="Excluir">🗑️</span>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+}
+
+function toggleConfirm(id) {
+  var a = appts.find(function(x) { return x.id === id; });
+  if (!a) return;
+  a.confirmed = !a.confirmed;
+  lsSet('glam_appts', JSON.stringify(appts));
+  renderAgendados();
+}
+
+function delAppt(id) {
+  if (!confirm('Cancelar este agendamento?')) return;
+  appts = appts.filter(function(a) { return a.id !== id; });
+  lsSet('glam_appts', JSON.stringify(appts));
+  renderAgendados();
+  renderHome();
+}
+
+function openEditModal(id) {
+  var a = appts.find(function(x) { return x.id === id; });
+  if (!a) return;
+  document.getElementById('e-id').value = id;
+  document.getElementById('e-name').value = a.name;
+  document.getElementById('e-phone').value = a.phone || '';
+  document.getElementById('e-service').value = a.service;
+  document.getElementById('e-obs').value = a.obs || '';
+  document.getElementById('modal-edit').classList.add('show');
+}
+function closeEditModal() { document.getElementById('modal-edit').classList.remove('show'); }
+
+function updateAppt() {
+  var id = parseInt(document.getElementById('e-id').value, 10);
+  var a = appts.find(function(x) { return x.id === id; });
+  if (!a) return;
+  var nm = document.getElementById('e-name').value.trim();
+  if (!nm) { alert('⚠️ Nome obrigatório!'); return; }
+  a.name = nm;
+  a.phone = document.getElementById('e-phone').value.trim();
+  a.service = document.getElementById('e-service').value;
+  a.serviceName = serviceNames[a.service] || a.serviceName;  a.duration = serviceDurations[a.service] || a.duration;
+  a.obs = document.getElementById('e-obs').value.trim();
+  lsSet('glam_appts', JSON.stringify(appts));
+  closeEditModal();
+  renderAgendados();
+  alert('✅ Agendamento atualizado!');
+}
+
+function renderHome() {
+  var today = new Date().toISOString().slice(0, 10);
+  var now = new Date();
+  var weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  var weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  var ws = weekStart.toISOString().slice(0, 10);
+  var we = weekEnd.toISOString().slice(0, 10);
+  document.getElementById('st-hoje').textContent = appts.filter(function(a) { return a.date === today; }).length;
+  document.getElementById('st-semana').textContent = appts.filter(function(a) { return a.date >= ws && a.date <= we; }).length;
+  document.getElementById('st-total').textContent = appts.length;
+  var prox = appts.find(function(a) {
+    return a.date > today || (a.date === today && (a.hour > now.getHours() || (a.hour === now.getHours() && (a.minute || 0) > now.getMinutes())));
+  });
+  document.getElementById('st-prox').textContent = prox ? prox.name.split(' ')[0] + ' ' + String(prox.hour).padStart(2, '0') + ':' + String(prox.minute || 0).padStart(2, '0') : '--';
+}
+
+function renderFluxo() {
+  var now = new Date();
+  var start = new Date(now);
+  start.setDate(now.getDate() - now.getDay());
+  var days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  var chart = document.getElementById('week-chart');
+  chart.innerHTML = '';
+  var max = 1, total = 0;
+  var counts = [];
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(start);
+    d.setDate(start.getDate() + i);
+    var ds = d.toISOString().slice(0, 10);
+    var c = appts.filter(function(a) { return a.date === ds; }).length;
+    counts.push({ day: days[i], count: c, date: ds });
+    if (c > max) max = c;
+    total += c;
+  }
+  counts.forEach(function(c) {
+    var h = Math.max(20, (c.count / max) * 160);
+    var parts = c.date.split('-');
+    chart.innerHTML += '<div class="bar-wrap"><div class="bar-container"><div class="bar" style="height:' + h + 'px"><div class="bar-val">' + c.count + '</div></div></div><div class="bar-lbl">' + c.day + '<small>' + parts[2] + '/' + parts[1] + '</small></div></div>';
+  });
+  var end = new Date(start);  end.setDate(start.getDate() + 6);
+  document.getElementById('week-range').textContent = 'Semana: ' + start.toLocaleDateString('pt-BR') + ' a ' + end.toLocaleDateString('pt-BR');
+  document.getElementById('week-total').textContent = total;
+  document.getElementById('week-avg').textContent = (total / 7).toFixed(1);
+  var top = counts.reduce(function(a, b) { return a.count > b.count ? a : b; });
+  document.getElementById('week-top').textContent = top.day + ' (' + top.count + ')';
+}
+
+function fmtDate(d) { var parts = d.split('-'); return parts[2] + '/' + parts[1] + '/' + parts[0]; }
+function fmtTime(a) { return String(a.hour).padStart(2, '0') + ':' + String(a.minute || 0).padStart(2, '0'); }
+
+function sendSingleWhatsApp(id) {
+  var a = appts.find(function(x) { return x.id === id; });
+  if (!a) return;
+  var confirmLink = 'https://wa.me/' + salonPhone;
+  var txt = '💅 *LE VALENTINO MANICURE*\n\n';
+  txt += 'Olá *' + a.name + '*! 💖\n\n';
+  txt += 'Seu horário está reservado:\n';
+  txt += '📆 ' + fmtDate(a.date) + '\n';
+  txt += '⏰ ' + fmtTime(a) + '\n';
+  txt += '💅 ' + a.serviceName + '\n';
+  txt += '⏱️ Duração: ' + fmtDur(a.duration || 60) + '\n';
+  if (salonAddress) txt += '📍 ' + salonAddress + '\n';
+  txt += '\n─────────────\n';
+  txt += '*Para confirmar, clique:*\n';
+  txt += confirmLink + '\n\n';
+  txt += 'E envie:\n✅ SIM\n❌ NÃO\n\n';
+  txt += 'Aguardamos! 💕';
+  if (reminderMsg) txt += '\n\n' + reminderMsg;
+  var phone = (a.phone || '').replace(/\D/g, '');
+  if (phone.length === 11) phone = '55' + phone;
+  var url = phone ? 'https://wa.me/' + phone + '?text=' + encodeURIComponent(txt) : 'https://wa.me/?text=' + encodeURIComponent(txt);
+  window.open(url, '_blank');
+}
+
+function exportWhatsApp() {
+  var data = getFiltered();
+  if (!data.length) { alert('Nenhum agendamento para enviar!'); return; }
+  var txt = '💅 *LE VALENTINO MANICURE*\n';
+  txt += '📅 ' + new Date().toLocaleDateString('pt-BR') + '\n';
+  txt += '─────────────\n';
+  data.forEach(function(a) {
+    txt += '\n*' + a.name + '* ' + (a.confirmed ? '✅' : '⏳') + '\n';
+    txt += '📆 ' + fmtDate(a.date) + ' ' + fmtTime(a) + '\n';
+    txt += '💅 ' + a.serviceName + '\n';
+  });
+  txt += '\n─────────────\nTotal: ' + data.length;
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function saveConfig() {
+  salonPhone = document.getElementById('cfg-phone').value.trim().replace(/\D/g, '');
+  salonAddress = document.getElementById('cfg-address').value.trim();
+  lsSet('glam_phone', salonPhone);
+  lsSet('glam_address', salonAddress);
+  alert('✅ Configurações salvas!');
+}
+
+function exportPDF() {
+  if (typeof window.jspdf === 'undefined') { alert('Biblioteca PDF não carregada. Verifique sua conexão com a internet.'); return; }
+  var data = getFiltered();
+  if (!data.length) { alert('Nenhum agendamento para exportar!'); return; }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF();
+  doc.setFillColor(255, 182, 193);
+  doc.rect(0, 0, 210, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.text('Le Valentino Manicure - Agendamentos', 105, 20, { align: 'center' });
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(11);
+  doc.text('Gerado: ' + new Date().toLocaleString('pt-BR'), 14, 40);
+  doc.text('Total: ' + data.length, 14, 47);
+  var y = 60;
+  doc.setFillColor(255, 230, 230);
+  doc.rect(14, y - 5, 182, 8, 'F');
+  doc.setFont(undefined, 'bold');
+  doc.text('DATA', 16, y); doc.text('HORA', 55, y);
+  doc.text('CLIENTE', 80, y);
+  doc.text('SERVICO', 130, y);
+  doc.text('STATUS', 170, y);
+  doc.setFont(undefined, 'normal');
+  y += 10;
+  data.forEach(function(a) {
+    if (y > 280) { doc.addPage(); y = 20; }
+    doc.text(fmtDate(a.date), 16, y);
+    doc.text(fmtTime(a), 55, y);
+    doc.text(String(a.name).substring(0, 25), 80, y);
+    doc.text(String(a.serviceName).substring(0, 18), 130, y);
+    doc.text(a.confirmed ? 'Confirmado' : 'Pendente', 170, y);
+    y += 8;
+  });
+  doc.save('agendamentos_le_valentino_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+
+function getFluxoData() {
+  var now = new Date();
+  var start = new Date(now);
+  start.setDate(now.getDate() - now.getDay());
+  var days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];  var counts = [];
+  var total = 0;
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(start);
+    d.setDate(start.getDate() + i);
+    var ds = d.toISOString().slice(0, 10);
+    var c = appts.filter(function(a) { return a.date === ds; }).length;
+    counts.push({ day: days[i], count: c, date: fmtDate(ds) });
+    total += c;
+  }
+  var end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  return { counts: counts, total: total, start: start, end: end };
+}
+
+function exportFluxoPDF() {
+  if (typeof window.jspdf === 'undefined') { alert('Biblioteca PDF não carregada. Verifique sua conexão com a internet.'); return; }
+  var data = getFluxoData();
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF();
+  doc.setFillColor(221, 160, 221); doc.rect(0, 0, 210, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.text('Fluxo Semanal - Le Valentino Manicure', 105, 20, { align: 'center' });
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(11);
+  doc.text('Periodo: ' + data.start.toLocaleDateString('pt-BR') + ' a ' + data.end.toLocaleDateString('pt-BR'), 14, 45);
+  var y = 65;
+  doc.setFillColor(230, 210, 255);
+  doc.rect(14, y - 5, 182, 8, 'F');
+  doc.setFont(undefined, 'bold');
+  doc.text('DIA', 16, y);
+  doc.text('DATA', 55, y);
+  doc.text('CLIENTES', 140, y);
+  doc.setFont(undefined, 'normal');
+  y += 10;
+  data.counts.forEach(function(c) {
+    doc.text(c.day, 16, y);
+    doc.text(c.date, 55, y);
+    doc.text(String(c.count), 140, y);
+    y += 8;
+  });
+  y += 10;
+  doc.setFont(undefined, 'bold');
+  doc.text('TOTAL: ' + data.total, 14, y);
+  doc.text('MEDIA: ' + (data.total / 7).toFixed(1) + '/dia', 14, y + 8);
+  var top = data.counts.reduce(function(a, b) { return a.count > b.count ? a : b; });
+  doc.text('TOP: ' + top.day + ' (' + top.count + ')', 14, y + 16);
+  doc.save('fluxo_le_valentino_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+function exportFluxoWhatsApp() {
+  var data = getFluxoData();
+  var txt = '📊 *FLUXO SEMANAL - LE VALENTINO MANICURE*\n';
+  txt += '📅 ' + data.start.toLocaleDateString('pt-BR') + ' a ' + data.end.toLocaleDateString('pt-BR') + '\n';
+  txt += '─────────────\n';
+  data.counts.forEach(function(c) {
+    txt += c.day + ' ' + c.date + ': ' + '█'.repeat(c.count) + '░'.repeat(Math.max(0, 10 - c.count)) + ' ' + c.count + '\n';
+  });
+  txt += '─────────────\n';
+  txt += 'Total: *' + data.total + '* | Media: ' + (data.total / 7).toFixed(1) + '/dia\n';
+  var top = data.counts.reduce(function(a, b) { return a.count > b.count ? a : b; });
+  txt += 'Top: ' + top.day + ' (' + top.count + ')';
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+
+// === PACOTES ===
+function savePackage() {
+  var name = document.getElementById('p-name').value.trim();
+  var service = document.getElementById('p-service').value;
+  var price = parseFloat(document.getElementById('p-price').value);
+  var start = document.getElementById('p-start').value;
+  var end = document.getElementById('p-end').value;
+  var desc = document.getElementById('p-desc').value.trim();
+  if (!name || isNaN(price) || !start || !end) { alert('⚠️ Preencha todos os campos obrigatórios!'); return; }
+  if (start > end) { alert('⚠️ Data de início deve ser anterior à data de fim!'); return; }
+  packages.push({
+    id: Date.now(), name: name, service: service,
+    serviceName: serviceNames[service] || 'Serviço',
+    price: price, start: start, end: end, desc: desc,
+    createdAt: new Date().toISOString()
+  });
+  lsSet('glam_packages', JSON.stringify(packages));
+  alert('✅ Pacote salvo com sucesso!');
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-price').value = '';
+  document.getElementById('p-start').value = '';
+  document.getElementById('p-end').value = '';
+  document.getElementById('p-desc').value = '';
+  renderPackages();
+}
+
+function renderPackages() {
+  var list = document.getElementById('package-list');
+  if (!packages.length) { list.innerHTML = '<div class="empty-msg">🎁 Nenhum pacote cadastrado</div>'; return; }
+  var html = '';
+  packages.forEach(function(p) {
+    html += '<div class="package">';
+    html += '<div class="package-info">';
+    html += '<h4>🎁 ' + p.name + '</h4>';    html += '<p>💅 ' + p.serviceName + '</p>';
+    html += '<p>📅 ' + fmtDate(p.start) + ' até ' + fmtDate(p.end) + '</p>';
+    if (p.desc) html += '<p>📝 ' + p.desc + '</p>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">';
+    html += '<div class="package-price">R$ ' + p.price.toFixed(2) + '</div>';
+    html += '<span class="icon-btn icon-whatsapp" onclick="sharePackage(' + p.id + ')" title="Compartilhar">💬</span>';
+    html += '<span class="icon-btn icon-edit" onclick="openEditPackageModal(' + p.id + ')" title="Editar">✏️</span>';
+    html += '<span class="icon-btn icon-delete" onclick="deletePackage(' + p.id + ')" title="Excluir">🗑️</span>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+}
+
+function openEditPackageModal(id) {
+  var p = packages.find(function(x) { return x.id === id; });
+  if (!p) return;
+  document.getElementById('ep-id').value = id;
+  document.getElementById('ep-name').value = p.name;
+  document.getElementById('ep-service').value = p.service;
+  document.getElementById('ep-price').value = p.price;
+  document.getElementById('ep-start').value = p.start;
+  document.getElementById('ep-end').value = p.end;
+  document.getElementById('ep-desc').value = p.desc || '';
+  document.getElementById('modal-edit-package').classList.add('show');
+}
+function closeEditPackageModal() { document.getElementById('modal-edit-package').classList.remove('show'); }
+
+function updatePackage() {
+  var id = parseInt(document.getElementById('ep-id').value, 10);
+  var p = packages.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var start = document.getElementById('ep-start').value;
+  var end = document.getElementById('ep-end').value;
+  if (start > end) { alert('⚠️ Data de início deve ser anterior à data de fim!'); return; }
+  var nm = document.getElementById('ep-name').value.trim();
+  var pr = parseFloat(document.getElementById('ep-price').value);
+  if (!nm || isNaN(pr) || !start || !end) { alert('⚠️ Preencha todos os campos obrigatórios!'); return; }
+  p.name = nm;
+  p.service = document.getElementById('ep-service').value;
+  p.serviceName = serviceNames[p.service] || p.serviceName;
+  p.price = pr;
+  p.start = start;
+  p.end = end;
+  p.desc = document.getElementById('ep-desc').value.trim();
+  lsSet('glam_packages', JSON.stringify(packages));
+  closeEditPackageModal();
+  renderPackages();
+  alert('✅ Pacote atualizado!');
+}
+function deletePackage(id) {
+  if (!confirm('Excluir este pacote?')) return;
+  packages = packages.filter(function(p) { return p.id !== id; });
+  lsSet('glam_packages', JSON.stringify(packages));
+  renderPackages();
+}
+
+function sharePackage(id) {
+  var p = packages.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var txt = '🎁 *PACOTE PROMOCIONAL*\n\n';
+  txt += '*' + p.name + '*\n\n';
+  txt += '💅 ' + p.serviceName + '\n';
+  txt += '💰 *R$ ' + p.price.toFixed(2) + '*\n';
+  txt += '📅 Válido de ' + fmtDate(p.start) + ' até ' + fmtDate(p.end) + '\n';
+  if (p.desc) txt += '\n📝 ' + p.desc + '\n';
+  txt += '\n─────────────\n';
+  txt += '💅 *LE VALENTINO MANICURE*\n';
+  if (salonAddress) txt += '📍 ' + salonAddress + '\n';
+  if (salonPhone) txt += '📱 ' + salonPhone + '\n';
+  txt += '\nAproveite esta oferta! 💕';
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+
+// === SERVIÇOS ===
+function openServicesModal() { renderServicesList(); document.getElementById('modal-services').classList.add('show'); }
+function closeServicesModal() { document.getElementById('modal-services').classList.remove('show'); }
+
+function renderServicesList() {
+  var html = '';
+  services.forEach(function(s) {
+    html += '<div class="set-row">';
+    html += '<div class="set-txt"><div class="set-title">' + s.name + '</div><div class="set-sub">⏱️ ' + fmtDur(s.duration) + '</div></div>';
+    html += '<span class="icon-btn icon-edit" onclick="editService(\'' + s.id + '\')" title="Editar">✏️</span>';
+    html += '<span class="icon-btn icon-delete" onclick="deleteService(\'' + s.id + '\')" title="Excluir">🗑️</span>';
+    html += '</div>';
+  });
+  document.getElementById('services-list').innerHTML = html || '<div class="empty-msg">Nenhum serviço</div>';
+}
+
+function editService(id) {
+  var s = services.find(function(x) { return x.id === id; });
+  if (!s) return;
+  document.getElementById('s-id').value = s.id;
+  document.getElementById('s-name').value = s.name;
+  document.getElementById('s-duration').value = s.duration;
+}
+
+function clearServiceForm() {  document.getElementById('s-id').value = '';
+  document.getElementById('s-name').value = '';
+  document.getElementById('s-duration').value = '';
+}
+
+function saveService() {
+  var name = document.getElementById('s-name').value.trim();
+  var dur = parseInt(document.getElementById('s-duration').value, 10);
+  var id = document.getElementById('s-id').value;
+  if (!name) { alert('⚠️ Informe o nome do serviço!'); return; }
+  if (isNaN(dur) || dur < 15) { alert('⚠️ Duração mínima de 15 minutos!'); return; }
+  if (id) {
+    var s = services.find(function(x) { return x.id === id; });
+    if (s) { s.name = name; s.duration = dur; }
+  } else {
+    services.push({ id: 'svc' + Date.now(), name: name, duration: dur });
+  }
+  lsSet('glam_services', JSON.stringify(services));
+  rebuildServiceMaps();
+  fillServiceSelects();
+  renderServicesList();
+  clearServiceForm();
+  updateServiceDuration();
+  alert('✅ Serviço salvo com sucesso!');
+}
+
+function deleteService(id) {
+  if (services.length <= 1) { alert('⚠️ Deve haver pelo menos 1 serviço!'); return; }
+  if (!confirm('Excluir este serviço?')) return;
+  services = services.filter(function(x) { return x.id !== id; });
+  lsSet('glam_services', JSON.stringify(services));
+  rebuildServiceMaps();
+  fillServiceSelects();
+  renderServicesList();
+  clearServiceForm();
+  updateServiceDuration();
+}
+
+// === CONFIGURAÇÕES ===
+function renderConfig() {
+  document.getElementById('cfg-phone').value = salonPhone;
+  document.getElementById('cfg-address').value = salonAddress;
+  document.getElementById('set-notif').checked = cfgNotif;
+  document.getElementById('set-silent').checked = cfgSilent;
+  document.getElementById('silent-sub').textContent = cfgSilent ? 'Modo silencioso ativado' : 'Modo silencioso desativado';
+  document.getElementById('reminder-sub').textContent = reminderMsg ? 'Personalizada' : 'Mensagem padrão';
+  document.getElementById('notiftime-sub').textContent = notifTime ? notifTime + ' minutos' : 'Não definido';
+  document.getElementById('interval-sub').textContent = slotInterval + ' minutos';
+}
+function toggleNotif() { cfgNotif = document.getElementById('set-notif').checked; lsSet('glam_notif', cfgNotif ? '1' : '0'); }
+
+function toggleSilent() {
+  cfgSilent = document.getElementById('set-silent').checked;
+  lsSet('glam_silent', cfgSilent ? '1' : '0');
+  document.getElementById('silent-sub').textContent = cfgSilent ? 'Modo silencioso ativado' : 'Modo silencioso desativado';
+}
+
+function openReminderModal() { document.getElementById('r-msg').value = reminderMsg; document.getElementById('modal-reminder').classList.add('show'); }
+function closeReminderModal() { document.getElementById('modal-reminder').classList.remove('show'); }
+
+function saveReminder() {
+  reminderMsg = document.getElementById('r-msg').value.trim();
+  lsSet('glam_reminder', reminderMsg);
+  closeReminderModal();
+  renderConfig();
+  alert('✅ Mensagem de lembrete salva!');
+}
+
+function resetReminder() {
+  document.getElementById('r-msg').value = '';
+  reminderMsg = '';
+  lsSet('glam_reminder', '');
+  renderConfig();
+}
+
+function setNotifTime() {
+  var v = prompt('⏰ Tempo de notificação antes do agendamento (em minutos, ex: 60). Deixe vazio para não definir:', notifTime || '');
+  if (v === null) return;
+  v = v.trim();
+  if (v === '') { notifTime = 0; lsSet('glam_notif_time', ''); }
+  else {
+    var n = parseInt(v, 10);
+    if (isNaN(n) || n < 0) { alert('⚠️ Valor inválido!'); return; }
+    notifTime = n;
+    lsSet('glam_notif_time', String(n));
+  }
+  renderConfig();
+}
+
+function setIntervalCfg() {
+  var v = prompt('⏱️ Intervalo entre horários (15, 30 ou 60 minutos):', slotInterval);
+  if (v === null) return;
+  var n = parseInt(v, 10);
+  if ([15, 30, 60].indexOf(n) === -1) { alert('⚠️ Use 15, 30 ou 60 minutos.'); return; }
+  slotInterval = n;
+  lsSet('glam_interval', String(n));
+  renderConfig();
+}
+function createBackup() {
+  var data = {
+    appts: appts, packages: packages, services: services,
+    settings: {
+      phone: salonPhone, address: salonAddress,
+      notif: cfgNotif ? '1' : '0', silent: cfgSilent ? '1' : '0',
+      reminder: reminderMsg, notifTime: String(notifTime), interval: String(slotInterval)
+    }
+  };
+  try {
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'backup_le_valentino_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    alert('✅ Cópia de segurança criada! O download foi iniciado.');
+  } catch (e) { alert('⚠️ Não foi possível criar o backup neste navegador.'); }
+}
+
+function restoreBackup() { document.getElementById('restore-file').click(); }
+
+function onRestoreFile(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (!data || typeof data !== 'object') throw 0;
+      if (Array.isArray(data.appts)) { appts = data.appts; lsSet('glam_appts', JSON.stringify(appts)); }
+      if (Array.isArray(data.packages)) { packages = data.packages; lsSet('glam_packages', JSON.stringify(packages)); }
+      var sv = sanitizeServices(data.services);
+      if (sv) { services = sv; lsSet('glam_services', JSON.stringify(services)); rebuildServiceMaps(); fillServiceSelects(); }
+      if (data.settings && typeof data.settings === 'object') {
+        var s = data.settings;
+        if (s.phone !== undefined) { salonPhone = String(s.phone); lsSet('glam_phone', salonPhone); }
+        if (s.address !== undefined) { salonAddress = String(s.address); lsSet('glam_address', salonAddress); }
+        if (s.notif !== undefined) { cfgNotif = s.notif === '1'; lsSet('glam_notif', s.notif); }
+        if (s.silent !== undefined) { cfgSilent = s.silent === '1'; lsSet('glam_silent', s.silent); }
+        if (s.reminder !== undefined) { reminderMsg = String(s.reminder); lsSet('glam_reminder', reminderMsg); }
+        if (s.notifTime !== undefined) { notifTime = parseInt(s.notifTime, 10) || 0; lsSet('glam_notif_time', String(notifTime)); }
+        if (s.interval !== undefined) { var iv = parseInt(s.interval, 10); slotInterval = [15, 30, 60].indexOf(iv) >= 0 ? iv : 30; lsSet('glam_interval', String(slotInterval)); }
+      }
+      alert('✅ Cópia de segurança restaurada com sucesso!');
+      renderConfig(); renderHome(); updateServiceDuration();
+    } catch (err) { alert('⚠️ Arquivo de backup inválido!'); }
+    e.target.value = '';  };
+  reader.readAsText(file);
+}
+
+function driveBackup() {
+  if (!confirm('☁️ Vamos criar uma cópia de segurança para você guardar no Google Drive. Continuar?')) return;
+  createBackup();
+  setTimeout(function() { alert('📁 Após o download, envie o arquivo para a sua pasta do Google Drive.'); }, 600);
+}
+
+function helpBackup(n) {
+  if (n === 1) alert('💾 Cria um arquivo com todos os seus dados (agendamentos, pacotes, serviços e configurações). Guarde-o em um local seguro.');
+  if (n === 2) alert('📂 Escolha um arquivo de backup criado anteriormente para restaurar todos os dados do aplicativo.');
+  if (n === 3) alert('☁️ Crie uma cópia de segurança e salve o arquivo no seu Google Drive para manter seus dados protegidos on-line.');
+}
+
+function wipeAll() {
+  if (!confirm('⚠️ Apagar: telefone do salão, endereço do salão, agendamentos, pacotes e históricos de fluxo?')) return;
+  if (!confirm('Tem certeza? Esta ação não pode ser desfeita!')) return;
+  ['glam_phone', 'glam_address', 'glam_appts', 'glam_packages'].forEach(function(k) { lsDel(k); });
+  salonPhone = '';
+  salonAddress = '';
+  appts = [];
+  packages = [];
+  renderConfig();
+  renderHome();
+  renderPackages();
+  alert('✅ Dados apagados com sucesso!');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 6000);
+}
+
+function checkReminders() {
+  if (!cfgNotif || cfgSilent || !notifTime) return;
+  var now = new Date();
+  var today = now.toISOString().slice(0, 10);
+  var nowMin = now.getHours() * 60 + now.getMinutes();
+  var list = appts.filter(function(a) {
+    if (!a || a.date !== today) return false;
+    var s = (a.hour || 0) * 60 + (a.minute || 0);
+    return s >= nowMin && (s - nowMin) <= notifTime;
+  });
+  if (!list.length) return;
+  var a = list[0];
+  showToast('🔔 Lembrete: ' + a.name + ' hoje às ' + fmtTime(a) + ' (' + a.serviceName + ')');}
+
+// === EFEITO DE LEQUE (FAN BURST) NOS BOTÕES ===
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn, nav button, .icon-btn, .picker-btn');
+  if (btn) {
+    btn.classList.remove('fan-click');
+    void btn.offsetWidth;
+    btn.classList.add('fan-click');
+    setTimeout(function() { btn.classList.remove('fan-click'); }, 600);
+  }
+});
+
+// Inicializar (com proteção total contra erros)
+try { fillServiceSelects(); } catch (e) {}
+try { renderHome(); } catch (e) {}
+try { updateServiceDuration(); } catch (e) {}
+try { checkReminders(); } catch (e) {}
+</script>
+</body>
+</html>
